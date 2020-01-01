@@ -11,12 +11,13 @@ module.exports = bot => {
       if (res.ok) {
         let text = "";
         text += "Rhost-Bot - WHO\n";
-        text += "==========================\n";
+        text += "============================================\n";
         text += res.data + "\n";
-        text += "==========================\n";
+        text += "============================================\n";
         text += `- Use '${bot.prefix}help' for help.\n`;
+        message.channel.send(pre(text));
       } else {
-        message.channel.send(pre());
+        message.channel.send(pre(`Unable to get WHO data: ${res.message}`));
       }
     }
   });

@@ -6,7 +6,7 @@
     discord will be able to see your immortals and wizards whilst idle cloaked.
 */
 
-&fn.who #3=
+&fn.who #75=
     ifelse(
         words(who()),
         iter(
@@ -28,9 +28,9 @@ Rhost-Bot - commands
 ============================================
 Command          Description
 --------------------------------------------
-!who             See Who's connected online.
-!chat <msg>      Send a message to the game.
-!help            Rhost-Bot help system.     
+!who          See Who's connected online.
+!chat <msg>   Send a message to the game.
+!help         Rhost-Bot help system.     
 ============================================
 
 
