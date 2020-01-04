@@ -4,6 +4,7 @@
     Get all of the visible members of the who list for the discord bot.
     You'll want to make sure your API object isn't immortal, or the whole of
     discord will be able to see your immortals and wizards whilst idle cloaked.
+-------------------------------------------------------------------------------
 */
 
 &fn.who #75=
@@ -22,6 +23,10 @@
     )
     
 
+/* 
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+*/
 
 
 Rhost-Bot - commands
@@ -32,16 +37,6 @@ Command          Description
 !chat <msg>   Send a message to the game.
 !help         Rhost-Bot help system.     
 ============================================
-
-
-Rhost-Bot - Help
-=============================================
-Topic              Description
----------------------------------------------
-commands           System commands available
-credits            Get in touch!
-=============================================
-- use '!help <topic>' for more.
 
 
 Rhost-Bot - Credits

@@ -1,26 +1,29 @@
 const { readdirSync } = require("fs");
 const { resolve } = require("path");
-const { pre } = require("./utils");
+const utils = require("./utils");
 const Discord = require("discord.js");
 const API = require("@digibear/rhost-wrapper");
 
 class Bot {
   /**
    * Create a new Bot object
-   * @param {string} dbref The #dbref of the API object to
+   * @param {object} options
+   * @param {string} options.dbref The #dbref of the API object to
    * associate with the bot
-   * @param {string} password  The password to access the RHost API
-   * @param {string} token The discord token to log into the bot.
-   * @param {string} prefix  The command prefix used for the bot.
-   * @param {number} tcpPort The port to host the bot's TCP socket.
+   * @param {string} options.password  The password to access the RHost API
+   * @param {string} options.token The discord token to log into the bot.
+   * @param {string} options.prefix  The command prefix used for the bot.
+   * @param {number} options.tcpPort The port to host the bot's TCP socket.
    */
-  constructor(dbref, password, token, prefix, tcpPort) {
+  constructor({ dbref, password, token, prefix, tcpPort }) {
     this.dbref = dbref;
     this.password = password;
+    this.utils = utils;
     this.token = token;
-    this.discord = new Discord.Client();
-    this.api = new API({ user, password, encode: true });
+    this.client = new Discord.Client();
+    this.api = new API({ user: dbref, password, encode: true });
     this.cmds = new Map();
+    this.help = new Map();
     this.prefix = prefix;
     this.tcpPort = tcpPort;
   }
@@ -55,46 +58,54 @@ class Bot {
    * @param {(args:String[]) => void} options.func The function to be run when the
    * command is entered on Discord.
    * @param {string} options.desc A few word description of the command.
+   * @param {string} options.usage Shown in the help screen under the command entry.
+   * Keep it short, maybe two or three words.
    * @param {string} options.roles A space seperated list of roles that
    * are authorized to use the command.
    */
   addCmd({ usage = "", cmd, func, roles = "", desc = "" }) {
     this.cmds.set(cmd.toLowerCase(), { func, roles, usage, desc });
+    this.help.set(cmd, { usage, desc, roles });
   }
 
   /**
    * Start the Discord Bot
    */
   start() {
-    this.discord.on("ready", () =>
-      console.log(`Bot connected as: ${this.discord.user.tag}`)
+    this.loadPluginDir(resolve(__dirname, "commands"));
+    this.client.on("ready", () =>
+      console.log(`Bot connected as: ${this.client.user.tag}`)
     );
 
-    this.discord.on("message", message => {
-      const parts = message.content.split(" ");
-      const cmd = parts
-        .shift()
-        .slice(1)
-        .toLowerCase();
-
-      const args = parts;
-
-      // Check for commands
-      if (message.content.startsWith(`${prefix}`)) {
+    this.client.on("message", message => {
+      if (message.content.startsWith(`${this.prefix}`)) {
+        const parts = message.content.split(" ");
+        const cmd = parts
+          .shift()
+          .slice(1)
+          .toLowerCase();
+        // Check for commands
         // If the command matches something in the
         // command map, fire it, else return a message
+        let found = false;
+
         this.cmds.forEach((v, k) => {
           if (cmd === k) {
-            return v.func(args, message);
+            found = true;
+            return v.func(parts, message);
           }
-
-          // If no command matches, send the proverbial huh? response.
-          message.channel.send(pre(`Huh? Use '${prefix}help' for help`));
         });
+
+        // If no command matches, send the proverbial huh? response.
+        if (!found) {
+          message.channel.send(
+            utils.pre(`Huh? Use '${this.prefix}help' for help`)
+          );
+        }
       }
     });
-
-    this.discord.login(this.token);
+    console.log("Token: ", this.token);
+    this.client.login(this.token).catch(error => console.error(error));
   }
 }
 
