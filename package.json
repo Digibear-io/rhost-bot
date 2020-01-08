@@ -1,17 +1,22 @@
 {
   "name": "rhost-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "A connector between RhostMUSH and Discord.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Discord",
+    "Mush",
+    "MUX"
+  ],
+  "author": "Lemuel Canady, Jr",
   "license": "MIT",
   "dependencies": {
     "@digibear/rhost-wrapper": "file:../rhost-api-wrapper",
     "discord.js": "^11.5.1",
-    "js-base64": "^2.5.1"
+    "js-base64": "^2.5.1",
+    "minimist": "^1.2.0"
   }
 }

@@ -55,7 +55,7 @@ class Bot {
    * Add commands to the Discord Bot.
    * @param {Object} options The options for setting a bot command
    * @param {string} options.cmd The name of the command
-   * @param {(args:String[]) => void} options.func The function to be run when the
+   * @param {(args:String[], message:any) => void} options.func The function to be run when the
    * command is entered on Discord.
    * @param {string} options.desc A few word description of the command.
    * @param {string} options.usage Shown in the help screen under the command entry.
@@ -69,43 +69,95 @@ class Bot {
   }
 
   /**
+   * Format a chat message.
+   * @param {Object} message
+   */
+  _formatChat(message) {
+    let chatMes = message.content;
+    let chatText = "";
+    let user = message.member.displayName;
+
+    if (chatMes.startsWith(":")) {
+      chatText += `${user} ${chatMes.slice(1)}`;
+    } else if (chatMes.startsWith(";")) {
+      chatText += `${user}${chatMes.slice(1)}`;
+    } else if (chatMes.startsWith('"') || chatMes.startsWith("'")) {
+      chatText += `${user} says, "${chatMes.slice(1)}"`;
+    } else {
+      chatText += `${user} says, "${chatMes}"`;
+    }
+
+    return chatText;
+  }
+
+  _processCmd(message) {
+    const parts = message.content.split(" ");
+    const cmd = parts
+      .shift()
+      .slice(1)
+      .toLowerCase();
+    // Check for commands
+    // If the command matches something in the
+    // command map, fire it, else return a message
+    let found = false;
+
+    this.cmds.forEach((v, k) => {
+      if (cmd === k) {
+        found = true;
+        return v.func(parts, message);
+      }
+    });
+
+    // If no command matches, send the proverbial huh? response.
+    if (!found) {
+      message.channel.send(utils.pre(`Huh? Use '${this.prefix}help' for help`));
+    }
+  }
+
+  /**
    * Start the Discord Bot
    */
   start() {
+    // Load commands
     this.loadPluginDir(resolve(__dirname, "commands"));
+    // Configure the TCP server.
+    const server = require("net").createServer(socket => {
+      socket.on("connect", () => console.log("New connection!"));
+      socket.on("data", buff => {
+        const chan = this.client.channels.find(val => val.name === "mush");
+        chan.send(utils.pre("[Discord] " + buff.toString()));
+      });
+    });
+
     this.client.on("ready", () =>
-      console.log(`Bot connected as: ${this.client.user.tag}`)
+      console.log(`Rhost Bot connected as: ${this.client.user.tag}`)
     );
 
     this.client.on("message", message => {
-      if (message.content.startsWith(`${this.prefix}`)) {
-        const parts = message.content.split(" ");
-        const cmd = parts
-          .shift()
-          .slice(1)
-          .toLowerCase();
-        // Check for commands
-        // If the command matches something in the
-        // command map, fire it, else return a message
-        let found = false;
+      if (
+        // Make sure it's a channel message, but not a command.
+        // Or output from Rhost-Bot.
+        message.channel.name === "mush" &&
+        !message.content.startsWith(this.prefix) &&
+        !message.content.startsWith("```")
+      ) {
+        const encodedMes = Base64.encode(this._formatChat(message));
+        message.channel.send(
+          utils.pre("[Discord] " + this._formatChat(message))
+        );
+        this.api.post(`@fo me=@cemit Discord=[decode64(${encodedMes})]`);
 
-        this.cmds.forEach((v, k) => {
-          if (cmd === k) {
-            found = true;
-            return v.func(parts, message);
-          }
-        });
-
-        // If no command matches, send the proverbial huh? response.
-        if (!found) {
-          message.channel.send(
-            utils.pre(`Huh? Use '${this.prefix}help' for help`)
-          );
-        }
+        // If it's a command
+      } else if (message.content.startsWith(this.prefix)) {
+        this._processCmd(message);
       }
     });
-    console.log("Token: ", this.token);
-    this.client.login(this.token).catch(error => console.error(error));
+    server.listen(this.tcpPort, () =>
+      console.info(`Rhost-Bot TCP connected on port: ${this.tcpPort}`)
+    );
+    this.client
+      .login(this.token)
+      .catch(error => console.error("Rhost-Bot login error: ", error.message));
   }
 }
 

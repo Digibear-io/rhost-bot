@@ -18,7 +18,12 @@ module.exports.frame = (title, content, prefix) => {
 
 module.exports.just = (string = "", options = {}) => {
   const { len = 25, just = "left", fill = " " } = options;
-  const workingLength = len - string.length;
+  let workingLength = len - string.length;
+  if (workingLength < 0) {
+    string = string.slice(0, len - 3);
+    string += "...";
+    workingLength = 0;
+  }
   switch (just.toLowerCase()) {
     case "left":
       return string + fill.repeat(workingLength);

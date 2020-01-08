@@ -1,18 +1,17 @@
 module.exports = bot => {
   bot.addCmd({
     cmd: "help",
-    usage: `${bot.prefix}help <topic>`,
-    desc: "Get help with commands!",
+    desc: "This Screen",
     func: async (args, message) => {
       // import some utilities locally.
       const frame = bot.utils.frame;
       const just = bot.utils.just;
-      let text = "\n";
+      let text = "";
       bot.help.forEach((v, k) => {
         text +=
-          just(v.usage || `${bot.prefix}${k}`, { len: 18 }) +
-          just(v.desc || "") +
-          "\n";
+          "\n" +
+          just(v.usage || `${bot.prefix}${k}`, { len: 15 }) +
+          just(v.desc || "", { len: 29 });
       });
       message.channel.send(frame("Help", text, bot.prefix));
     }

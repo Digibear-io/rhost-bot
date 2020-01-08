@@ -7,7 +7,7 @@
 -------------------------------------------------------------------------------
 */
 
-&fn.who #75=
+&fn.who #76=
     ifelse(
         words(who()),
         iter(
@@ -18,36 +18,7 @@
                 [rjust([timefmt($!2cd $02X:$02F,conn(##))],10)]
                 [rjust(singletime(idle(##)),5)]
             )
-        ), %rNo one's connected.  Bummer!
-
+        ), %rNo one's connected. %(Bummer!%)
     )
-    
 
-/* 
--------------------------------------------------------------------------------
--------------------------------------------------------------------------------
-*/
-
-
-Rhost-Bot - commands
-============================================
-Command          Description
---------------------------------------------
-!who          See Who's connected online.
-!chat <msg>   Send a message to the game.
-!help         Rhost-Bot help system.     
-============================================
-
-
-Rhost-Bot - Credits
-============================================
-2020 Kumakun @ RhostDev
-MIT Licensed.  
-
-Visit us on Github!
- * https://github.com/digibear-io/
-
-Feature requests, comments, bugs?
- * https//github.com/digibear-io/issues/
-============================================
-- Use '!help' for help.
+&fn.chat #76=^[Discord] *:think [execscript(discord.js, %0)]
