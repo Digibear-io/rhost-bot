@@ -13,9 +13,10 @@ class Bot {
    * @param {string} options.password  The password to access the RHost API
    * @param {string} options.token The discord token to log into the bot.
    * @param {string} options.prefix  The command prefix used for the bot.
-   * @param {number} options.tcpPort The port to host the bot's TCP socket.
+   * @param {number} options.esPort The port to host the bot's TCP socket.
+   * @param {string} [options.host] The host to connect to.
    */
-  constructor({ dbref, password, token, prefix, tcpPort }) {
+  constructor({ dbref, password, token, prefix, esPort, host }) {
     this.dbref = dbref;
     this.password = password;
     this.utils = utils;
@@ -24,8 +25,9 @@ class Bot {
     this.api = new API({ user: dbref, password, encode: true });
     this.cmds = new Map();
     this.help = new Map();
-    this.prefix = prefix;
-    this.tcpPort = tcpPort;
+    this.prefix = prefix || "!";
+    this.esPort = esPort || 4950;
+    this.host = host || "localhost";
   }
 
   /**
@@ -68,33 +70,11 @@ class Bot {
     this.help.set(cmd, { usage, desc, roles });
   }
 
-  /**
-   * Format a chat message.
-   * @param {Object} message
-   */
-  _formatChat(message) {
-    let chatMes = message.content;
-    let chatText = "";
-    let user = message.member.displayName;
-
-    if (chatMes.startsWith(":")) {
-      chatText += `${user} ${chatMes.slice(1)}`;
-    } else if (chatMes.startsWith(";")) {
-      chatText += `${user}${chatMes.slice(1)}`;
-    } else if (chatMes.startsWith('"') || chatMes.startsWith("'")) {
-      chatText += `${user} says, "${chatMes.slice(1)}"`;
-    } else {
-      chatText += `${user} says, "${chatMes}"`;
-    }
-
-    return chatText;
-  }
-
-  _processCmd(message) {
+  processCmd(message) {
     const parts = message.content.split(" ");
     const cmd = parts
       .shift()
-      .slice(1)
+      .slice(this.prefix.length)
       .toLowerCase();
     // Check for commands
     // If the command matches something in the
@@ -120,44 +100,10 @@ class Bot {
   start() {
     // Load commands
     this.loadPluginDir(resolve(__dirname, "commands"));
-    // Configure the TCP server.
-    const server = require("net").createServer(socket => {
-      socket.on("connect", () => console.log("New connection!"));
-      socket.on("data", buff => {
-        const chan = this.client.channels.find(val => val.name === "mush");
-        chan.send(utils.pre("[Discord] " + buff.toString()));
-      });
-    });
 
-    this.client.on("ready", () =>
-      console.log(`Rhost Bot connected as: ${this.client.user.tag}`)
-    );
-
-    this.client.on("message", message => {
-      if (
-        // Make sure it's a channel message, but not a command.
-        // Or output from Rhost-Bot.
-        message.channel.name === "mush" &&
-        !message.content.startsWith(this.prefix) &&
-        !message.content.startsWith("```")
-      ) {
-        const encodedMes = Base64.encode(this._formatChat(message));
-        message.channel.send(
-          utils.pre("[Discord] " + this._formatChat(message))
-        );
-        this.api.post(`@fo me=@cemit Discord=[decode64(${encodedMes})]`);
-
-        // If it's a command
-      } else if (message.content.startsWith(this.prefix)) {
-        this._processCmd(message);
-      }
-    });
-    server.listen(this.tcpPort, () =>
-      console.info(`Rhost-Bot TCP connected on port: ${this.tcpPort}`)
-    );
-    this.client
-      .login(this.token)
-      .catch(error => console.error("Rhost-Bot login error: ", error.message));
+    // Load systems
+    require("./systems/tcpserver")(this);
+    require("./systems/discordclient")(this);
   }
 }
 
