@@ -13,9 +13,16 @@ A Discord bot designed to connect to a [RhostMUSH](http://rhostmush.com). This r
 ### Some Notes
 
 The config file is pretty simple at the moment, but will change in the future:
-```
+
+```json
 {
-  
+    "token": "xxxxxxxxxx",  // Your bot API token
+    "prefix": "!",  // The prefix for your bot's commands
+    "esPort": 0000, // The port for the bot use either the API or
+                    // connect to the game in robot mode.
+    "dbref": "#00", // The #dbref of the API object, or robot.
+    "password": "xxxx", // The API or robot password.
+}
 }
 ```
 
