@@ -22,7 +22,13 @@ The config file is pretty simple at the moment, but will change in the future:
                     // connect to the game in robot mode.
     "dbref": "#00", // The #dbref of the API object, or robot.
     "password": "xxxx", // The API or robot password.
+    "robot" : false // If true, the bot will connect through a login
+                    // You'll need to @robot an object for the
+                    // bot to log into!
 }
 ```
+
+**Robot Mode**
+If you're unable to open a tcp port to use the HTTP API, robot mode will log the bot into the game through a `@robot` and interact with discord from there.
 
 Have fun! But be aware, it might be broken at the moment. Remember, this repo is under construction. :3
