@@ -31,4 +31,12 @@ The config file is pretty simple at the moment, but will change in the future:
 **Robot Mode**
 If you're unable to open a tcp port to use the HTTP API, robot mode will log the bot into the game through a `@robot` and interact with discord from there.
 
+### Todo
+
+- Finish individual channel handler.
+- Finsh Page handler.
+- Add restart command to reconnect to the mush if in robot mode.
+- Make the bot able to update itself while logged in.
+- Make a system to install new commands/functionality from github.
+
 Have fun! But be aware, it might be broken at the moment. Remember, this repo is under construction. :3
