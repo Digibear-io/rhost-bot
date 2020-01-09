@@ -10,4 +10,4 @@ A Discord bot designed to connect to a [RhostMUSH](http://rhostmush.com). This r
 5. node .
 ```
 
-Have fun! But be aware, it might be broken at the moment. Remember, this repo is under HEAVY construction. :3
+Have fun! But be aware, it might be broken at the moment. Remember, this repo is under construction. :3
