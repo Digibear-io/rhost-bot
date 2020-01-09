@@ -23,7 +23,6 @@ The config file is pretty simple at the moment, but will change in the future:
     "dbref": "#00", // The #dbref of the API object, or robot.
     "password": "xxxx", // The API or robot password.
 }
-}
 ```
 
 Have fun! But be aware, it might be broken at the moment. Remember, this repo is under construction. :3
