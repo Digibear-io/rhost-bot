@@ -14,7 +14,7 @@ A Discord bot designed to connect to a [RhostMUSH](http://rhostmush.com). This r
 
 The config file is pretty simple at the moment, but will change in the future:
 
-```json
+```js
 {
     "token": "xxxxxxxxxx",  // Your bot API token
     "prefix": "!",  // The prefix for your bot's commands
