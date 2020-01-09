@@ -10,4 +10,13 @@ A Discord bot designed to connect to a [RhostMUSH](http://rhostmush.com). This r
 5. node .
 ```
 
+### Some Notes
+
+The config file is pretty simple at the moment, but will change in the future:
+```
+{
+  
+}
+```
+
 Have fun! But be aware, it might be broken at the moment. Remember, this repo is under construction. :3
