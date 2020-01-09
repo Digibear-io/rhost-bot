@@ -33,6 +33,8 @@ module.exports = bot => {
           console.log("Checking for required attributes.");
         }
       });
+
+      bot.on("ping", () => {});
     });
   };
 

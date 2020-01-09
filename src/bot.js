@@ -132,26 +132,28 @@ module.exports = class Bot {
           const args = msg.args || [];
           run(cmd, args);
           break;
+
         case "conn":
+          // Let he bot know it's logged in.
           this.emit("login", true);
 
-          // Start a heartbeat system with the bot to make sure that it
-          // remains connected.
-          setinterval(() => {
-            this.roboClient.socket.write('think %{ "type":"pong" %}');
+          // Start the pulse timer.
+          this.heartbeat = setTimeout(() => {
+            this.emit("dead");
+          }, 5000);
+          this.emit("ping");
+          break;
 
-            // Wait two seconds for a response.  If one doesn't happen,
-            // reconnect the bot if no pong is returned.
-            this.heartbeat = setTimeout(() => {
-              // No pong message recieved within two seconds.  Destroy the
-              // socket and reconnect.
-              this.roboClient.socket.destroy();
-              console.log("Connection lost to game server.  Reconnecting.");
-              this.roboClient.connect();
-            }, 2000);
+        case "pong":
+          // life from the game!
+          clearTimeout(this.heartbeat);
+
+          // restart the timer.
+          this.heartbeat = setTimeout(() => {
+            this.emit("dead");
           }, 30000);
           break;
-        case "pong":
+
         default:
           break;
       }
