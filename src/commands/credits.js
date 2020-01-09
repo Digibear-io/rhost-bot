@@ -2,7 +2,7 @@ module.exports = bot => {
   bot.addCmd({
     cmd: "credits",
     desc: "The credit page!",
-    func: (_, mess) => {
+    func: mess => {
       let text = "\n2020 Kumakun @ RhostDev\n";
       text += "MIT Licensed.\n\n";
       text += "Visit us on Github!\n";

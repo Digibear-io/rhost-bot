@@ -11,4 +11,6 @@ module.exports = bot => {
   server.listen(bot.esPort, () =>
     console.info(`Rhost-Bot TCP connected on port: ${bot.esPort}`)
   );
+
+  return server;
 };

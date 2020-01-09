@@ -2,7 +2,7 @@ module.exports = bot => {
   bot.addCmd({
     cmd: "help",
     desc: "This Screen",
-    func: async (args, message) => {
+    func: async message => {
       // import some utilities locally.
       const frame = bot.utils.frame;
       const just = bot.utils.just;

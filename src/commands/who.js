@@ -2,7 +2,7 @@ module.exports = bot => {
   bot.addCmd({
     cmd: "who",
     desc: "See who's connected!",
-    func: async (args, message) => {
+    func: async message => {
       // import some utilities locally.
       const pre = bot.utils.pre;
       const frame = bot.utils.frame;
