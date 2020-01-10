@@ -136,22 +136,6 @@ module.exports = class Bot {
         case "conn":
           // Let he bot know it's logged in.
           this.emit("login", true);
-
-          // Start the pulse timer.
-          this.heartbeat = setTimeout(() => {
-            this.emit("dead");
-          }, 5000);
-          this.emit("ping");
-          break;
-
-        case "pong":
-          // life from the game!
-          clearTimeout(this.heartbeat);
-
-          // restart the timer.
-          this.heartbeat = setTimeout(() => {
-            this.emit("dead");
-          }, 30000);
           break;
 
         default:

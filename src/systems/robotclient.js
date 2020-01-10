@@ -21,26 +21,30 @@ module.exports = bot => {
       const timeout = setTimeout(() => {
         client.destroy();
         console.log("Unable to connect to Robot.");
+        process.exit(1);
       }, 10000);
-
-      // The bot is logged in. Run nessisary 'boot' checks and code.
-      bot.on("login", login => {
-        if (login) {
-          clearTimeout(timeout);
-          console.log(
-            `RhostBot connected and logged in: ${bot.host}:${bot.esPort}`
-          );
-          console.log("Checking for required attributes.");
-        }
-      });
-
-      bot.on("ping", () => {});
     });
   };
+
+  // The bot is logged in. Run nessisary 'boot' checks and code.
+  bot.on("login", login => {
+    if (login) {
+      clearTimeout(timeout);
+      console.log(
+        `RhostBot connected and logged in: ${bot.host}:${bot.esPort}`
+      );
+    }
+  });
 
   // If the client is disconnected, try to reconnect.
   client.on("close", error => {
     if (error) console.error("Robot Client closed because of error!");
+    client.write(
+      "Robot connection to mush closed.  Reconnecting in 5 seconds.\r\n"
+    );
+    setTimeout(() => {
+      connect();
+    }, 5000);
   });
 
   client.on("error", err => console.error(err));
