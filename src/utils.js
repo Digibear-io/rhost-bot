@@ -37,3 +37,21 @@ module.exports.just = (string = "", options = {}) => {
       return string + fill.repeat(workingLength);
   }
 };
+
+module.exports.formatChat = message => {
+  let chatMes = message.content ? message.content : message;
+  let chatText = "";
+  let user = message.member.displayName;
+
+  if (chatMes.startsWith(":")) {
+    chatText += `${user} ${chatMes.slice(1)}`;
+  } else if (chatMes.startsWith(";")) {
+    chatText += `${user}${chatMes.slice(1)}`;
+  } else if (chatMes.startsWith('"') || chatMes.startsWith("'")) {
+    chatText += `${user} says, "${chatMes.slice(1)}"`;
+  } else {
+    chatText += `${user} says, "${chatMes}"`;
+  }
+
+  return chatText;
+};

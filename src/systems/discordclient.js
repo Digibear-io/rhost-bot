@@ -1,23 +1,5 @@
 module.exports = bot => {
   // Utility function
-  const formatChat = message => {
-    let chatMes = message.content;
-    let chatText = "";
-    let user = message.member.displayName;
-
-    if (chatMes.startsWith(":")) {
-      chatText += `${user} ${chatMes.slice(1)}`;
-    } else if (chatMes.startsWith(";")) {
-      chatText += `${user}${chatMes.slice(1)}`;
-    } else if (chatMes.startsWith('"') || chatMes.startsWith("'")) {
-      chatText += `${user} says, "${chatMes.slice(1)}"`;
-    } else {
-      chatText += `${user} says, "${chatMes}"`;
-    }
-
-    return chatText;
-  };
-
   bot.client.on("ready", () =>
     console.log(`Rhost Bot connected as: ${bot.client.user.tag}`)
   );

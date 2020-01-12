@@ -96,7 +96,10 @@ module.exports = class Bot {
    * @param {*} message The discord message object.
    */
   processCmd(message) {
-    // Send a message
+    /**
+     *
+     * @param {Boolean} found Indicator if a matching command was found.
+     */
     const huh = found => {
       if (!found && message.channel) {
         message.channel.send(
@@ -105,20 +108,30 @@ module.exports = class Bot {
       }
     };
 
+    /**
+     * Run through the available commads to find a match.
+     * @param {string} cmd The command string given to the bot.
+     * @param {string[]} args Any associated arguments that came
+     * with the command string.
+     */
     const run = async (cmd, args) => {
       let found = false;
 
       for (const k of this.cmds.keys()) {
         if (cmd === k) {
           found = true;
-          await v.func(message, args);
+          await this.cmds.get(k).func(message, args);
         }
-
-        // if the command wasn't found, print a 'huh?' message,
-        // MUSH style. :)
-        huh(found);
       }
+
+      // if the command wasn't found, print a 'huh?' message,
+      // MUSH style. :)
+      huh(found);
     };
+
+    // ----
+    // Actually Process the command!
+    // ----
 
     // See if the message is a JSON string, if not
     // treat it as text and slice awway!
@@ -145,16 +158,21 @@ module.exports = class Bot {
       // If it's not a JSON string, then process
       // as plain text.  If it came from discord, grab .content,
       // else we're just working with a plain string from the game,
-      const args = message.content
-        ? message.content.split(" ")
-        : message.split(" ");
-      const cmd = message.content
-        ? args
-            .shift()
-            .slice(this.prefix.length)
-            .toLowerCase()
-        : [];
-      run(cmd, args);
+      const msg = message.content || message;
+      const mushChan = msg.shift();
+      const args = msg.split(" ");
+      const cmd = args
+        .shift()
+        .slice(this.prefix.length)
+        .toLowerCase();
+
+      // is it a command?
+      if (msg.startsWith(this.prefix)) {
+        run(cmd, args);
+        // ... or a channel message?
+      } else if (this.channels.has(mushChan)) {
+        chan(message);
+      }
     }
   }
 

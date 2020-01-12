@@ -23,18 +23,18 @@ module.exports = bot => {
         console.log("Unable to connect to Robot.");
         process.exit(1);
       }, 10000);
+
+      // The bot is logged in. Run nessisary 'boot' checks and code.
+      bot.on("login", login => {
+        if (login) {
+          clearTimeout(timeout);
+          console.log(
+            `RhostBot connected and logged in: ${bot.host}:${bot.esPort}`
+          );
+        }
+      });
     });
   };
-
-  // The bot is logged in. Run nessisary 'boot' checks and code.
-  bot.on("login", login => {
-    if (login) {
-      clearTimeout(timeout);
-      console.log(
-        `RhostBot connected and logged in: ${bot.host}:${bot.esPort}`
-      );
-    }
-  });
 
   // If the client is disconnected, try to reconnect.
   client.on("close", error => {
