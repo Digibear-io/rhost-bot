@@ -17,6 +17,6 @@
     "@digibear/rhost-wrapper": "file:../rhost-api-wrapper",
     "discord.js": "^11.5.1",
     "js-base64": "^2.5.1",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.2"
   }
 }
